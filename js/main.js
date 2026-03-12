@@ -69,24 +69,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const waveFlood = document.getElementById('waveFlood');
   const heroDjFlash = document.getElementById('heroDjFlash');
 
-  // Timeline:
-  // 0s: Poster visible (sunset DJ booth)
-  // 3s: Logo BAM on top of poster
-  // 4.5s: Video fades in + plays, logo fades out
-  // Video ends: IS BACK → IN 2026 → GET YOUR TICKETS NOW!
-  //             → Blue wave flood rises → DJ names flash → DJ fade → waves recede → poster stays
+  // Timeline (FAST):
+  // 0s: Poster visible
+  // 1.5s: Logo BAM
+  // 2.5s: Video starts, logo fades
+  // ~2.5s into video: Waves start rising OVER the video
+  // Wave peak: video hidden, IS BACK → IN 2026 → TICKETS → DJ flash → waves recede
 
   if (heroVideo) {
-    // Step 1: Logo slams in at 3s on top of poster
+    // Step 1: Logo slams in at 1.5s
     setTimeout(() => {
       if (heroLogo) heroLogo.classList.add('logo-visible');
-    }, 3000);
+    }, 1500);
 
-    // Step 2: At 4.5s start video, fade out logo
+    // Step 2: At 2.5s start video, fade out logo
     setTimeout(() => {
       heroVideo.classList.add('playing');
       heroVideo.play();
-    }, 4500);
+    }, 2500);
 
     setTimeout(() => {
       if (heroLogo) {
@@ -94,76 +94,75 @@ document.addEventListener('DOMContentLoaded', () => {
         heroLogo.style.animation = 'none';
         heroLogo.style.opacity = '0';
       }
+    }, 3000);
+
+    // Step 3: Waves start rising ~2.5s into video (while still playing!)
+    setTimeout(() => {
+      if (waveFlood) waveFlood.classList.add('rising');
     }, 5000);
 
-    // Step 3: When video ends → text sequence then flood
-    heroVideo.addEventListener('ended', () => {
-      const t = 0; // offset from video end
+    // Step 4: At wave peak — hide video, start text sequence
+    setTimeout(() => {
+      heroVideo.pause();
+      heroVideo.classList.remove('playing');
+      heroVideo.classList.add('ended');
+    }, 6200);
 
-      // IS BACK
-      setTimeout(() => {
-        if (heroIsBack) heroIsBack.classList.add('visible');
-      }, t + 300);
+    // IS BACK (fast)
+    setTimeout(() => {
+      if (heroIsBack) heroIsBack.classList.add('visible');
+    }, 6400);
 
-      setTimeout(() => {
-        if (heroIsBack) {
-          heroIsBack.classList.remove('visible');
-          heroIsBack.classList.add('fadeout');
-        }
-      }, t + 1400);
+    setTimeout(() => {
+      if (heroIsBack) {
+        heroIsBack.classList.remove('visible');
+        heroIsBack.classList.add('fadeout');
+      }
+    }, 7200);
 
-      // IN 2026
-      setTimeout(() => {
-        if (heroIn2026) heroIn2026.classList.add('visible');
-      }, t + 1700);
+    // IN 2026
+    setTimeout(() => {
+      if (heroIn2026) heroIn2026.classList.add('visible');
+    }, 7400);
 
-      setTimeout(() => {
-        if (heroIn2026) {
-          heroIn2026.classList.remove('visible');
-          heroIn2026.classList.add('fadeout');
-        }
-      }, t + 2600);
+    setTimeout(() => {
+      if (heroIn2026) {
+        heroIn2026.classList.remove('visible');
+        heroIn2026.classList.add('fadeout');
+      }
+    }, 8100);
 
-      // GET YOUR TICKETS NOW!
-      setTimeout(() => {
-        if (heroTickets) heroTickets.classList.add('visible');
-      }, t + 2900);
+    // GET YOUR TICKETS NOW!
+    setTimeout(() => {
+      if (heroTickets) heroTickets.classList.add('visible');
+    }, 8300);
 
-      setTimeout(() => {
-        if (heroTickets) {
-          heroTickets.classList.remove('visible');
-          heroTickets.classList.add('fadeout');
-        }
-      }, t + 3800);
+    setTimeout(() => {
+      if (heroTickets) {
+        heroTickets.classList.remove('visible');
+        heroTickets.classList.add('fadeout');
+      }
+    }, 9000);
 
-      // Blue wave flood rises
-      setTimeout(() => {
-        if (waveFlood) waveFlood.classList.add('rising');
-      }, t + 4200);
+    // DJ names flash
+    setTimeout(() => {
+      if (heroDjFlash) heroDjFlash.classList.add('visible');
+    }, 9200);
 
-      // At flood peak: hide video, show DJ names
-      setTimeout(() => {
-        heroVideo.classList.remove('playing');
-        heroVideo.classList.add('ended');
-        if (heroDjFlash) heroDjFlash.classList.add('visible');
-      }, t + 5600);
+    setTimeout(() => {
+      if (heroDjFlash) {
+        heroDjFlash.classList.remove('visible');
+        heroDjFlash.classList.add('fadeout');
+      }
+    }, 10200);
 
-      // DJ names fade out
-      setTimeout(() => {
-        if (heroDjFlash) {
-          heroDjFlash.classList.remove('visible');
-          heroDjFlash.classList.add('fadeout');
-        }
-      }, t + 6800);
-
-      // Waves recede → reveal poster
-      setTimeout(() => {
-        if (waveFlood) {
-          waveFlood.classList.remove('rising');
-          waveFlood.classList.add('receding');
-        }
-      }, t + 7200);
-    });
+    // Waves recede → reveal poster
+    setTimeout(() => {
+      if (waveFlood) {
+        waveFlood.classList.remove('rising');
+        waveFlood.classList.add('receding');
+      }
+    }, 10500);
   }
 
   // --- Scroll Reveal (Intersection Observer) ---
