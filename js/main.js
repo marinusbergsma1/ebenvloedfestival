@@ -60,45 +60,109 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('scroll', updateActiveNav, { passive: true });
 
-  // --- Hero Video → Wave flood → Poster + IS BACK → Logo ---
+  // --- Complete Hero Animation Timeline ---
   const heroVideo = document.getElementById('heroVideo');
   const heroIsBack = document.getElementById('heroIsBack');
+  const heroIn2026 = document.getElementById('heroIn2026');
+  const heroTickets = document.getElementById('heroTickets');
   const heroLogo = document.getElementById('heroLogo');
   const waveFlood = document.getElementById('waveFlood');
+  const heroDjFlash = document.getElementById('heroDjFlash');
 
-  if (heroVideo && waveFlood) {
+  // Timeline:
+  // 0s: Poster visible (sunset DJ booth)
+  // 3s: Logo BAM on top of poster
+  // 4.5s: Video fades in + plays, logo fades out
+  // Video ends: IS BACK → IN 2026 → GET YOUR TICKETS NOW!
+  //             → Blue wave flood rises → DJ names flash → DJ fade → waves recede → poster stays
+
+  if (heroVideo) {
+    // Step 1: Logo slams in at 3s on top of poster
+    setTimeout(() => {
+      if (heroLogo) heroLogo.classList.add('logo-visible');
+    }, 3000);
+
+    // Step 2: At 4.5s start video, fade out logo
+    setTimeout(() => {
+      heroVideo.classList.add('playing');
+      heroVideo.play();
+    }, 4500);
+
+    setTimeout(() => {
+      if (heroLogo) {
+        heroLogo.classList.remove('logo-visible');
+        heroLogo.style.animation = 'none';
+        heroLogo.style.opacity = '0';
+      }
+    }, 5000);
+
+    // Step 3: When video ends → text sequence then flood
     heroVideo.addEventListener('ended', () => {
-      // Step 1: Waves rise up covering the screen
-      waveFlood.classList.add('rising');
+      const t = 0; // offset from video end
 
-      // Step 2: At peak (waves cover screen), hide video to reveal poster behind
-      setTimeout(() => {
-        heroVideo.classList.add('ended');
-      }, 1400);
-
-      // Step 3: Waves recede downward, revealing the poster
-      setTimeout(() => {
-        waveFlood.classList.remove('rising');
-        waveFlood.classList.add('receding');
-      }, 2000);
-
-      // Step 4: IS BACK slams in after poster is revealed
+      // IS BACK
       setTimeout(() => {
         if (heroIsBack) heroIsBack.classList.add('visible');
-      }, 3500);
+      }, t + 300);
 
-      // Step 5: IS BACK gone
       setTimeout(() => {
         if (heroIsBack) {
           heroIsBack.classList.remove('visible');
           heroIsBack.classList.add('fadeout');
         }
-      }, 4700);
+      }, t + 1400);
 
-      // Step 6: Logo BAM
+      // IN 2026
       setTimeout(() => {
-        if (heroLogo) heroLogo.classList.add('logo-visible');
-      }, 5100);
+        if (heroIn2026) heroIn2026.classList.add('visible');
+      }, t + 1700);
+
+      setTimeout(() => {
+        if (heroIn2026) {
+          heroIn2026.classList.remove('visible');
+          heroIn2026.classList.add('fadeout');
+        }
+      }, t + 2600);
+
+      // GET YOUR TICKETS NOW!
+      setTimeout(() => {
+        if (heroTickets) heroTickets.classList.add('visible');
+      }, t + 2900);
+
+      setTimeout(() => {
+        if (heroTickets) {
+          heroTickets.classList.remove('visible');
+          heroTickets.classList.add('fadeout');
+        }
+      }, t + 3800);
+
+      // Blue wave flood rises
+      setTimeout(() => {
+        if (waveFlood) waveFlood.classList.add('rising');
+      }, t + 4200);
+
+      // At flood peak: hide video, show DJ names
+      setTimeout(() => {
+        heroVideo.classList.remove('playing');
+        heroVideo.classList.add('ended');
+        if (heroDjFlash) heroDjFlash.classList.add('visible');
+      }, t + 5600);
+
+      // DJ names fade out
+      setTimeout(() => {
+        if (heroDjFlash) {
+          heroDjFlash.classList.remove('visible');
+          heroDjFlash.classList.add('fadeout');
+        }
+      }, t + 6800);
+
+      // Waves recede → reveal poster
+      setTimeout(() => {
+        if (waveFlood) {
+          waveFlood.classList.remove('rising');
+          waveFlood.classList.add('receding');
+        }
+      }, t + 7200);
     });
   }
 

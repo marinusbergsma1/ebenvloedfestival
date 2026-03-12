@@ -60,23 +60,35 @@
   <section class="hero" id="home">
     <div class="hero-bg">
       <img class="hero-poster-img" src="images/hero-poster.jpg" alt="Eb & Vloed Festival">
-      <video class="hero-video" id="heroVideo" autoplay muted playsinline>
+      <video class="hero-video" id="heroVideo" muted playsinline>
         <source src="images/hero-video.mp4" type="video/mp4">
       </video>
       <div class="hero-overlay"></div>
     </div>
-    <!-- Wave transition overlay -->
+
+    <!-- Wave flood overlay (blue) -->
     <div class="wave-flood" id="waveFlood">
       <svg class="wave-flood-svg" viewBox="0 0 1440 200" preserveAspectRatio="none">
-        <path class="wave-flood-path wave-flood-path--1" d="M0,60 C360,120 720,20 1080,80 C1260,110 1380,70 1440,60 L1440,200 L0,200 Z" fill="var(--color-sand)"/>
-        <path class="wave-flood-path wave-flood-path--2" d="M0,90 C240,40 480,120 720,60 C960,10 1200,100 1440,50 L1440,200 L0,200 Z" fill="#c4a67a"/>
-        <path class="wave-flood-path wave-flood-path--3" d="M0,120 C180,70 360,140 540,90 C720,50 900,130 1080,80 C1260,40 1380,100 1440,70 L1440,200 L0,200 Z" fill="rgba(255,255,255,0.25)"/>
+        <path class="wave-flood-path wave-flood-path--1" d="M0,60 C360,120 720,20 1080,80 C1260,110 1380,70 1440,60 L1440,200 L0,200 Z" fill="#1a5276"/>
+        <path class="wave-flood-path wave-flood-path--2" d="M0,90 C240,40 480,120 720,60 C960,10 1200,100 1440,50 L1440,200 L0,200 Z" fill="#0a1628"/>
+        <path class="wave-flood-path wave-flood-path--3" d="M0,120 C180,70 360,140 540,90 C720,50 900,130 1080,80 C1260,40 1380,100 1440,70 L1440,200 L0,200 Z" fill="rgba(59,196,196,0.15)"/>
       </svg>
       <div class="wave-flood-fill"></div>
     </div>
 
+    <!-- DJ lineup flash during flood -->
+    <div class="hero-dj-flash" id="heroDjFlash">
+      <span>Artmann</span>
+      <span>Menesix</span>
+      <span>Elinov</span>
+      <span>Maurice van Wyk</span>
+      <span>Nino b2b Jort Kroon</span>
+    </div>
+
     <div class="hero-content hero-content--minimal">
       <div class="hero-isback" id="heroIsBack">IS BACK</div>
+      <div class="hero-in2026" id="heroIn2026">IN 2026</div>
+      <div class="hero-tickets" id="heroTickets">GET YOUR TICKETS NOW!</div>
       <img src="images/LOGO.png" alt="Eb & Vloed Festival" class="hero-logo" id="heroLogo">
     </div>
     <div class="wave-divider wave-divider--hero wave-divider--animated">
