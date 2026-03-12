@@ -149,19 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroContent = document.querySelector('.hero-content');
     const hero = document.querySelector('.hero');
 
-    hero.addEventListener('mousemove', (e) => {
-      const rect = hero.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-      heroContent.style.transform = `translate(${x * -8}px, ${y * -8}px)`;
-
-      palms.forEach(palm => {
-        const speed = parseFloat(palm.dataset.parallax) * 40;
-        const scrollOffset = window.scrollY * parseFloat(palm.dataset.parallax);
-        palm.style.transform = `translate(${x * speed}px, ${scrollOffset + y * speed}px)`;
+    if (hero && heroContent) {
+      hero.addEventListener('mousemove', (e) => {
+        const rect = hero.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        heroContent.style.transform = `translate(${x * -8}px, ${y * -8}px)`;
       });
-    });
+    }
   }
 
 });

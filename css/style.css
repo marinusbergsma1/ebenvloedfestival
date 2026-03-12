@@ -229,17 +229,23 @@ a:hover { color: var(--color-ocean-light); }
   inset: 0;
 }
 
+.hero-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+}
+
 .hero-bg-image {
   position: absolute;
   inset: -20px;
   background-size: cover;
   background-position: center;
-  animation: heroZoom 20s ease-in-out infinite alternate;
-}
-
-@keyframes heroZoom {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.08); }
 }
 
 .hero-overlay {
@@ -288,6 +294,35 @@ a:hover { color: var(--color-ocean-light); }
   z-index: 3;
   text-align: center;
   padding: 120px 24px 80px;
+}
+
+/* Hero minimal: logo + year */
+.hero-content--minimal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.hero-logo {
+  width: clamp(220px, 40vw, 420px);
+  filter: drop-shadow(0 8px 40px rgba(0, 0, 0, 0.5));
+  animation: heroLogoFloat 6s ease-in-out infinite;
+}
+
+@keyframes heroLogoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hero-year-standalone {
+  font-family: var(--font-body);
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 200;
+  letter-spacing: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  text-indent: 16px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
 }
 
 .hero-badge {
@@ -601,6 +636,7 @@ a:hover { color: var(--color-ocean-light); }
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   transition: transform var(--transition-slow);
+  background: var(--color-bg);
 }
 
 .about-image:hover { transform: scale(1.02) rotate(0deg) !important; }
@@ -717,7 +753,12 @@ a:hover { color: var(--color-ocean-light); }
 .artist-card-socials a:nth-child(3) { transition-delay: 0.1s; }
 .artist-card-socials a:hover { background: rgba(59, 196, 196, 0.3); transform: translateY(-2px) !important; }
 
-.artist-card-socials img { filter: brightness(0) invert(1); }
+.artist-card-socials img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+}
 
 .artist-card-info { padding: 20px 24px; }
 
@@ -995,7 +1036,7 @@ a:hover { color: var(--color-ocean-light); }
   transform: translateY(-3px);
 }
 
-.footer-social img { filter: brightness(0) invert(1); opacity: 0.7; }
+.footer-social img { width: 24px; height: 24px; object-fit: contain; opacity: 0.8; }
 .footer-social:hover img { opacity: 1; }
 
 .footer-links {
