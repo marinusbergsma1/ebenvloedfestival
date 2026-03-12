@@ -60,6 +60,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('scroll', updateActiveNav, { passive: true });
 
+  // --- Hero Video → Poster + IS BACK → Logo sequence ---
+  const heroVideo = document.getElementById('heroVideo');
+  const heroIsBack = document.getElementById('heroIsBack');
+  const heroLogo = document.getElementById('heroLogo');
+
+  if (heroVideo) {
+    heroVideo.addEventListener('ended', () => {
+      heroVideo.classList.add('ended');
+    });
+  }
+
+  // Animation timeline:
+  // 3s: IS BACK slams in
+  // 4.2s: IS BACK gone
+  // 4.6s: Logo BAM
+  if (heroIsBack) {
+    setTimeout(() => {
+      heroIsBack.classList.add('visible');
+    }, 3000);
+
+    setTimeout(() => {
+      heroIsBack.classList.remove('visible');
+      heroIsBack.classList.add('fadeout');
+    }, 4200);
+
+    setTimeout(() => {
+      if (heroLogo) heroLogo.classList.add('logo-visible');
+    }, 4600);
+  }
+
   // --- Scroll Reveal (Intersection Observer) ---
   const revealElements = document.querySelectorAll('.reveal');
   const revealObserver = new IntersectionObserver((entries) => {
