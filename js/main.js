@@ -60,34 +60,46 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('scroll', updateActiveNav, { passive: true });
 
-  // --- Hero Video → Poster + IS BACK → Logo sequence ---
+  // --- Hero Video → Wave flood → Poster + IS BACK → Logo ---
   const heroVideo = document.getElementById('heroVideo');
   const heroIsBack = document.getElementById('heroIsBack');
   const heroLogo = document.getElementById('heroLogo');
+  const waveFlood = document.getElementById('waveFlood');
 
-  if (heroVideo) {
+  if (heroVideo && waveFlood) {
     heroVideo.addEventListener('ended', () => {
-      heroVideo.classList.add('ended');
+      // Step 1: Waves rise up covering the screen
+      waveFlood.classList.add('rising');
+
+      // Step 2: At peak (waves cover screen), hide video to reveal poster behind
+      setTimeout(() => {
+        heroVideo.classList.add('ended');
+      }, 1400);
+
+      // Step 3: Waves recede downward, revealing the poster
+      setTimeout(() => {
+        waveFlood.classList.remove('rising');
+        waveFlood.classList.add('receding');
+      }, 2000);
+
+      // Step 4: IS BACK slams in after poster is revealed
+      setTimeout(() => {
+        if (heroIsBack) heroIsBack.classList.add('visible');
+      }, 3500);
+
+      // Step 5: IS BACK gone
+      setTimeout(() => {
+        if (heroIsBack) {
+          heroIsBack.classList.remove('visible');
+          heroIsBack.classList.add('fadeout');
+        }
+      }, 4700);
+
+      // Step 6: Logo BAM
+      setTimeout(() => {
+        if (heroLogo) heroLogo.classList.add('logo-visible');
+      }, 5100);
     });
-  }
-
-  // Animation timeline:
-  // 3s: IS BACK slams in
-  // 4.2s: IS BACK gone
-  // 4.6s: Logo BAM
-  if (heroIsBack) {
-    setTimeout(() => {
-      heroIsBack.classList.add('visible');
-    }, 3000);
-
-    setTimeout(() => {
-      heroIsBack.classList.remove('visible');
-      heroIsBack.classList.add('fadeout');
-    }, 4200);
-
-    setTimeout(() => {
-      if (heroLogo) heroLogo.classList.add('logo-visible');
-    }, 4600);
   }
 
   // --- Scroll Reveal (Intersection Observer) ---
