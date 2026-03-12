@@ -63,92 +63,74 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Complete Hero Animation Timeline ---
   const heroVideo = document.getElementById('heroVideo');
   const heroIsBack = document.getElementById('heroIsBack');
-  const heroIn2026 = document.getElementById('heroIn2026');
   const heroTickets = document.getElementById('heroTickets');
   const heroLogo = document.getElementById('heroLogo');
   const waveFlood = document.getElementById('waveFlood');
   const heroDjFlash = document.getElementById('heroDjFlash');
+  const heroBlueIntro = document.getElementById('heroBlueIntro');
+  const heroGenres = document.getElementById('heroGenres');
 
-  // Timeline (FAST):
-  // 0s: Poster visible
-  // 1.5s: Logo BAM
-  // 2.5s: Video starts, logo fades
-  // ~2.5s into video: Waves start rising OVER the video
-  // Wave peak: video hidden, IS BACK → IN 2026 → TICKETS → DJ flash → waves recede
+  // NEW Timeline:
+  // 0s: Blue screen + logo visible
+  // 2s: Blue screen recedes via waves → poster revealed, logo stays
+  // 4.5s: Logo fades out, IS BACK! appears
+  // 5.3s: IS BACK fades, video starts
+  // ~7.5s: Wave flood rises over video
+  // 9s: Video hidden, DJ names flash
+  // 10s: DJs fade, genres appear
+  // 11s: Genres fade
+  // 11.5s: Waves recede with GET YOUR TICKETS NOW!
+  // 13s: Tickets fades, poster stays
 
   if (heroVideo) {
-    // Step 1: Logo slams in at 1.5s
-    setTimeout(() => {
-      if (heroLogo) heroLogo.classList.add('logo-visible');
-    }, 1500);
+    // 0s: Logo visible immediately on blue screen
+    if (heroLogo) {
+      heroLogo.classList.add('logo-visible');
+    }
 
-    // Step 2: At 2.5s start video, fade out logo
+    // 2s: Blue intro recedes — waves slide down, poster revealed
     setTimeout(() => {
-      heroVideo.classList.add('playing');
-      heroVideo.play();
-    }, 2500);
+      if (heroBlueIntro) heroBlueIntro.classList.add('receding');
+    }, 2000);
 
+    // 4.5s: Logo fades, IS BACK! appears
     setTimeout(() => {
       if (heroLogo) {
         heroLogo.classList.remove('logo-visible');
         heroLogo.style.animation = 'none';
         heroLogo.style.opacity = '0';
       }
-    }, 3000);
-
-    // Step 3: Waves start rising ~2.5s into video (while still playing!)
-    setTimeout(() => {
-      if (waveFlood) waveFlood.classList.add('rising');
-    }, 5000);
-
-    // Step 4: At wave peak — hide video, start text sequence
-    setTimeout(() => {
-      heroVideo.pause();
-      heroVideo.classList.remove('playing');
-      heroVideo.classList.add('ended');
-    }, 6200);
-
-    // IS BACK (fast)
-    setTimeout(() => {
       if (heroIsBack) heroIsBack.classList.add('visible');
-    }, 6400);
+    }, 4500);
 
+    // 5.3s: IS BACK fades
     setTimeout(() => {
       if (heroIsBack) {
         heroIsBack.classList.remove('visible');
         heroIsBack.classList.add('fadeout');
       }
-    }, 7200);
+    }, 5300);
 
-    // IN 2026
+    // 5.5s: Video starts
     setTimeout(() => {
-      if (heroIn2026) heroIn2026.classList.add('visible');
-    }, 7400);
+      heroVideo.classList.add('playing');
+      heroVideo.play();
+    }, 5500);
 
+    // 7.5s: Wave flood rises (video still playing)
     setTimeout(() => {
-      if (heroIn2026) {
-        heroIn2026.classList.remove('visible');
-        heroIn2026.classList.add('fadeout');
-      }
-    }, 8100);
+      if (waveFlood) waveFlood.classList.add('rising');
+    }, 7500);
 
-    // GET YOUR TICKETS NOW!
+    // 9s: Video hidden, DJ names flash
     setTimeout(() => {
-      if (heroTickets) heroTickets.classList.add('visible');
-    }, 8300);
-
-    setTimeout(() => {
-      if (heroTickets) {
-        heroTickets.classList.remove('visible');
-        heroTickets.classList.add('fadeout');
-      }
+      heroVideo.pause();
+      heroVideo.classList.remove('playing');
+      heroVideo.classList.add('ended');
+      if (heroDjFlash) heroDjFlash.classList.add('visible');
     }, 9000);
 
-    // DJ names flash
-    setTimeout(() => {
-      if (heroDjFlash) heroDjFlash.classList.add('visible');
-    }, 9200);
-
+    // 10s: DJs fade out
     setTimeout(() => {
       if (heroDjFlash) {
         heroDjFlash.classList.remove('visible');
@@ -156,13 +138,39 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 10200);
 
-    // Waves recede → reveal poster
+    // 10.4s: Genres appear
+    setTimeout(() => {
+      if (heroGenres) heroGenres.classList.add('visible');
+    }, 10400);
+
+    // 11.4s: Genres fade
+    setTimeout(() => {
+      if (heroGenres) {
+        heroGenres.classList.remove('visible');
+        heroGenres.classList.add('fadeout');
+      }
+    }, 11400);
+
+    // 11.8s: Waves recede
     setTimeout(() => {
       if (waveFlood) {
         waveFlood.classList.remove('rising');
         waveFlood.classList.add('receding');
       }
-    }, 10500);
+    }, 11800);
+
+    // 12s: GET YOUR TICKETS NOW! appears over poster
+    setTimeout(() => {
+      if (heroTickets) heroTickets.classList.add('visible');
+    }, 12200);
+
+    // 13.5s: Tickets fades — poster stays
+    setTimeout(() => {
+      if (heroTickets) {
+        heroTickets.classList.remove('visible');
+        heroTickets.classList.add('fadeout');
+      }
+    }, 13500);
   }
 
   // --- Scroll Reveal (Intersection Observer) ---

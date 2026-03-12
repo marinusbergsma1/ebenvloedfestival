@@ -253,6 +253,41 @@ a:hover { color: var(--color-ocean-light); }
   pointer-events: none;
 }
 
+/* Blue intro overlay (covers everything at load) */
+.hero-blue-intro {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hero-blue-intro-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg);
+}
+
+.hero-blue-intro-waves {
+  position: absolute;
+  bottom: -100px;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  transform: rotate(180deg);
+}
+
+.hero-blue-intro.receding {
+  animation: introRecede 2s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+@keyframes introRecede {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-110%); }
+}
+
 /* Wave flood transition */
 .wave-flood {
   position: absolute;
@@ -546,6 +581,42 @@ a:hover { color: var(--color-ocean-light); }
   100% { opacity: 0; }
 }
 
+/* Genres flash during flood */
+.hero-genres {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-genres span {
+  font-family: 'TT Norms', 'Inter', sans-serif;
+  font-size: clamp(18px, 4vw, 48px);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 30px rgba(59, 196, 196, 0.5);
+}
+
+.hero-genres-sep {
+  color: var(--color-accent) !important;
+  font-size: clamp(24px, 5vw, 60px) !important;
+}
+
+.hero-genres.visible {
+  animation: djFlashIn 0.5s ease-out forwards;
+}
+
+.hero-genres.fadeout {
+  animation: djFlashOut 0.4s ease-in forwards;
+}
+
 /* Hero elements that appear after logo */
 .hero-after-logo {
   opacity: 0;
@@ -700,8 +771,7 @@ a:hover { color: var(--color-ocean-light); }
 
 /* Beach transition zone */
 .beach-transition {
-  height: 40px;
-  background: var(--color-sand);
+  display: none;
 }
 
 /* Animated wave */
@@ -923,54 +993,53 @@ a:hover { color: var(--color-ocean-light); }
 
 .section--about {
   background: linear-gradient(180deg,
-    var(--color-sand) 0%,
-    var(--color-sand) 25%,
-    #c4a67a 45%,
-    #6b5a42 65%,
+    var(--color-ocean-deep) 0%,
+    #143d5e 30%,
+    #0f2d48 55%,
     var(--color-bg) 85%
   );
   padding-top: 80px;
 }
 
-/* About section text colors for sand background */
+/* About section text colors for ocean background */
 .section--about .section-label {
-  color: #1a3a4a;
+  color: var(--color-accent);
 }
 
 .section--about .section-title {
-  color: #1a2030;
+  color: var(--color-text);
 }
 
 .section--about .section-title em {
-  color: #0e7a7a;
+  color: var(--color-accent);
 }
 
 .section--about .about-description {
-  color: #3a3020;
+  color: var(--color-text-muted);
 }
 
 .section--about .about-feature {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(59, 196, 196, 0.15);
   backdrop-filter: blur(8px);
 }
 
 .section--about .about-feature:hover {
-  background: rgba(255, 255, 255, 0.5);
-  border-color: rgba(14, 122, 122, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(59, 196, 196, 0.3);
 }
 
 .section--about .about-feature strong {
-  color: #1a2030;
+  color: var(--color-text);
 }
 
 .section--about .about-feature span {
-  color: #5a4a35;
+  color: var(--color-text-muted);
 }
 
 .section--about .about-feature-icon {
-  background: linear-gradient(135deg, rgba(14, 122, 122, 0.2), rgba(14, 122, 122, 0.1));
-  color: #0e7a7a;
+  background: linear-gradient(135deg, rgba(59, 196, 196, 0.2), rgba(59, 196, 196, 0.1));
+  color: var(--color-accent);
 }
 
 .section--about .about-image {
