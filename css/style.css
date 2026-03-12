@@ -368,6 +368,40 @@ a:hover { color: var(--color-ocean-light); }
   flex-shrink: 0;
 }
 
+/* Hero CTA */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-ocean-light));
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all var(--transition);
+  box-shadow: 0 4px 25px rgba(59, 196, 196, 0.35);
+}
+
+.hero-cta:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 40px rgba(59, 196, 196, 0.5);
+  color: var(--color-bg);
+}
+
+.hero-cta svg {
+  transition: transform var(--transition);
+}
+
+.hero-cta:hover svg {
+  transform: translateX(4px);
+}
+
 /* Animated wave */
 .wave-divider--animated svg {
   height: 120px;
