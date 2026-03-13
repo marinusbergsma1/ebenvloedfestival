@@ -82,53 +82,89 @@ document.addEventListener('DOMContentLoaded', () => {
   // 11.5s: Waves recede with GET YOUR TICKETS NOW!
   // 13s: Tickets fades, poster stays
 
-  if (heroVideo) {
-    // 0s: Logo visible immediately on blue screen
-    if (heroLogo) {
-      heroLogo.classList.add('logo-visible');
+  // Countdown timer
+  function updateCountdown() {
+    const festivalDate = new Date('2026-06-13T14:00:00+02:00');
+    const now = new Date();
+    const diff = festivalDate - now;
+    if (diff <= 0) return;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    const el = document.getElementById('heroCountdown');
+    if (el) {
+      el.innerHTML = `
+        <div class="countdown-item"><span class="countdown-num">${days}</span><span class="countdown-label">dagen</span></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-item"><span class="countdown-num">${String(hours).padStart(2,'0')}</span><span class="countdown-label">uur</span></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-item"><span class="countdown-num">${String(mins).padStart(2,'0')}</span><span class="countdown-label">min</span></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-item"><span class="countdown-num">${String(secs).padStart(2,'0')}</span><span class="countdown-label">sec</span></div>
+      `;
     }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 
-    // 2s: Blue intro recedes — waves slide down, poster revealed
+  if (heroVideo) {
+    // 0s: Clean blue screen — no logo, just anticipation
+    // 1.5s: Blue intro text "13 JUNI" pulses
+    const heroDateFlash = document.getElementById('heroDateFlash');
+    setTimeout(() => {
+      if (heroDateFlash) heroDateFlash.classList.add('visible');
+    }, 800);
+
+    // 2s: Date fades
+    setTimeout(() => {
+      if (heroDateFlash) {
+        heroDateFlash.classList.remove('visible');
+        heroDateFlash.classList.add('fadeout');
+      }
+    }, 2200);
+
+    // 2.5s: Blue intro recedes — waves slide down, poster revealed
     setTimeout(() => {
       if (heroBlueIntro) heroBlueIntro.classList.add('receding');
-    }, 2000);
+    }, 2500);
 
-    // 4.5s: Logo fades, IS BACK! appears
+    // 4s: IS BACK! slams in over poster
     setTimeout(() => {
-      if (heroLogo) {
-        heroLogo.classList.remove('logo-visible');
-        heroLogo.style.animation = 'none';
-        heroLogo.style.opacity = '0';
-      }
       if (heroIsBack) heroIsBack.classList.add('visible');
-    }, 4500);
+    }, 4200);
 
-    // 5.3s: IS BACK fades
+    // 5s: IS BACK fades
     setTimeout(() => {
       if (heroIsBack) {
         heroIsBack.classList.remove('visible');
         heroIsBack.classList.add('fadeout');
       }
-    }, 5300);
+    }, 5000);
 
-    // 5.5s: Video starts
+    // 5.2s: Video starts
     setTimeout(() => {
       heroVideo.classList.add('playing');
       heroVideo.play();
-    }, 5500);
+    }, 5200);
 
-    // 7.5s: Wave flood rises (video still playing)
+    // 7s: Wave flood rises (video still playing, covers it)
     setTimeout(() => {
       if (waveFlood) waveFlood.classList.add('rising');
-    }, 7500);
+    }, 7000);
 
-    // 9s: Video hidden, DJ names flash
+    // 8.5s: Video hidden, DJ names flash one by one
     setTimeout(() => {
       heroVideo.pause();
       heroVideo.classList.remove('playing');
       heroVideo.classList.add('ended');
       if (heroDjFlash) heroDjFlash.classList.add('visible');
-    }, 9000);
+      // Stagger each DJ name
+      const djNames = heroDjFlash ? heroDjFlash.querySelectorAll('span') : [];
+      djNames.forEach((name, i) => {
+        name.style.animationDelay = (i * 0.15) + 's';
+      });
+    }, 8500);
 
     // 10s: DJs fade out
     setTimeout(() => {
@@ -136,41 +172,44 @@ document.addEventListener('DOMContentLoaded', () => {
         heroDjFlash.classList.remove('visible');
         heroDjFlash.classList.add('fadeout');
       }
-    }, 10200);
+    }, 10000);
 
-    // 10.4s: Genres appear
+    // 10.2s: Genres appear
     setTimeout(() => {
       if (heroGenres) heroGenres.classList.add('visible');
-    }, 10400);
+    }, 10200);
 
-    // 11.4s: Genres fade
+    // 11s: Genres fade
     setTimeout(() => {
       if (heroGenres) {
         heroGenres.classList.remove('visible');
         heroGenres.classList.add('fadeout');
       }
-    }, 11400);
+    }, 11000);
 
-    // 11.8s: Waves recede
+    // 11.3s: Waves recede, logo BAM + GET YOUR TICKETS
     setTimeout(() => {
       if (waveFlood) {
         waveFlood.classList.remove('rising');
         waveFlood.classList.add('receding');
       }
+    }, 11300);
+
+    // 11.8s: Logo slams in over poster
+    setTimeout(() => {
+      if (heroLogo) heroLogo.classList.add('logo-visible');
     }, 11800);
 
-    // 12s: GET YOUR TICKETS NOW! appears over poster
+    // 12.5s: GET YOUR TICKETS NOW! below logo
     setTimeout(() => {
       if (heroTickets) heroTickets.classList.add('visible');
-    }, 12200);
+    }, 12500);
 
-    // 13.5s: Tickets fades — poster stays
+    // 13s: Show countdown
     setTimeout(() => {
-      if (heroTickets) {
-        heroTickets.classList.remove('visible');
-        heroTickets.classList.add('fadeout');
-      }
-    }, 13500);
+      const cd = document.getElementById('heroCountdown');
+      if (cd) cd.classList.add('visible');
+    }, 13200);
   }
 
   // --- Scroll Reveal (Intersection Observer) ---
