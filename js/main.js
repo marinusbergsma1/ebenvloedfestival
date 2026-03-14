@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     heroVideo.addEventListener('timeupdate', () => {
       if (waveStarted) return;
       const timeLeft = heroVideo.duration - heroVideo.currentTime;
-      if (timeLeft <= 2 && timeLeft > 0) {
+      if (timeLeft <= 0.5 && timeLeft > 0) {
         waveStarted = true;
         if (waveFlood) waveFlood.classList.add('rising');
       }
