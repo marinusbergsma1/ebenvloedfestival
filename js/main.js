@@ -149,17 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => { enterOverlay.style.display = 'none'; }, 800);
     }
 
-    // Unlock & start background music immediately with fade-in
+    // Hide blue intro immediately — start with poster visible
+    if (heroBlueIntro) heroBlueIntro.style.display = 'none';
+
+    // Start background music RIGHT AWAY with fast fade-in
     if (bgMusic) {
       bgMusic.volume = 0;
       bgMusic.play().then(() => {
         if (musicToggle) musicToggle.classList.add('playing');
         let vol = 0;
         const fadeIn = setInterval(() => {
-          vol += 0.015;
-          if (vol >= 0.3) { vol = 0.3; clearInterval(fadeIn); }
+          vol += 0.03;
+          if (vol >= 0.35) { vol = 0.35; clearInterval(fadeIn); }
           if (!allMuted) bgMusic.volume = vol;
-        }, 60);
+        }, 40);
       }).catch(() => {});
     }
 
@@ -177,38 +180,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const heroDateFlash = document.getElementById('heroDateFlash');
 
-    // PHASE 1: Blue intro with date flash
+    // PHASE 1: Poster visible for 2s, music fading in
+    // 1.5s: "13 JUNI" appears over poster
     setTimeout(() => {
       if (heroDateFlash) heroDateFlash.classList.add('visible');
-    }, 800);
+    }, 1500);
 
+    // 2s: Gejuich / cheering SFX
+    setTimeout(() => {
+      playSfx(sfxIntro1, 0.7);
+    }, 2000);
+
+    // 3s: "13 JUNI" fades out
     setTimeout(() => {
       if (heroDateFlash) {
         heroDateFlash.classList.remove('visible');
         heroDateFlash.classList.add('fadeout');
       }
-    }, 2200);
+    }, 3200);
 
-    // PHASE 2: Blue intro recedes → VIDEO starts immediately (no poster)
+    // 3.5s: Video starts playing (replaces poster)
     setTimeout(() => {
       heroVideo.classList.add('playing');
       heroVideo.play();
-      playSfx(sfxIntro1, 0.6);
-      if (heroBlueIntro) heroBlueIntro.classList.add('receding');
-    }, 2500);
+      playSfx(sfxIntro2, 0.5);
+    }, 3500);
 
-    // PHASE 3: IS BACK! slams in while video plays + SFX
+    // 5.5s: IS BACK! slams in while video plays
     setTimeout(() => {
       if (heroIsBack) heroIsBack.classList.add('visible');
-      playSfx(sfxIntro2, 0.5);
-    }, 4200);
+    }, 5500);
 
+    // 6.3s: IS BACK fades
     setTimeout(() => {
       if (heroIsBack) {
         heroIsBack.classList.remove('visible');
         heroIsBack.classList.add('fadeout');
       }
-    }, 5000);
+    }, 6300);
 
     // PHASE 5: Track video time — start waves 1.5s BEFORE video ends
     let waveStarted = false;

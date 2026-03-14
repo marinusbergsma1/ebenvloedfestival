@@ -55,14 +55,20 @@ a:hover { color: var(--color-ocean-light); }
 /* --- Enter Overlay --- */
 .enter-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 10000;
-  background: var(--color-bg);
+  background: #0a1628;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: opacity 0.8s ease, transform 0.8s ease;
+  overflow: hidden;
 }
 
 .enter-overlay.leaving {
@@ -77,8 +83,8 @@ a:hover { color: var(--color-ocean-light); }
 }
 
 .enter-overlay-logo {
-  width: clamp(200px, 40vw, 400px);
-  margin: 0 auto 30px;
+  width: clamp(120px, 25vw, 220px);
+  margin: 0 auto 40px;
   filter: drop-shadow(0 0 40px rgba(59, 196, 196, 0.3));
 }
 
