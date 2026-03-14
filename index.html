@@ -26,8 +26,22 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Audio elements -->
+  <audio id="bgMusic" loop preload="auto"><source src="images/bg-music.mp3" type="audio/mpeg"></audio>
+  <audio id="sfxIntro1" preload="auto"><source src="images/sfx-intro1.mp3" type="audio/mpeg"></audio>
+  <audio id="sfxIntro2" preload="auto"><source src="images/sfx-intro2.mp3" type="audio/mpeg"></audio>
+
+  <!-- Click-to-enter overlay (unlocks audio) -->
+  <div class="enter-overlay" id="enterOverlay">
+    <div class="enter-overlay-inner">
+      <img src="images/LOGO.png" alt="Eb & Vloed" class="enter-overlay-logo">
+      <div class="enter-overlay-text">ENTER</div>
+      <div class="enter-overlay-hint">klik om te starten</div>
+    </div>
+  </div>
+
   <!-- Preloader -->
-  <div class="preloader" id="preloader">
+  <div class="preloader" id="preloader" style="display:none;">
     <div class="preloader-inner">
       <img src="images/LOGO.png" alt="Eb & Vloed" class="preloader-logo">
       <div class="preloader-wave">
@@ -402,16 +416,7 @@
     </div>
   </footer>
 
-  <!-- Audio -->
-  <audio id="bgMusic" loop preload="auto">
-    <source src="images/bg-music.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="sfxIntro1" preload="auto">
-    <source src="images/sfx-intro1.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="sfxIntro2" preload="auto">
-    <source src="images/sfx-intro2.mp3" type="audio/mpeg">
-  </audio>
+  <!-- Music toggle (mute/unmute) -->
   <button class="music-toggle" id="musicToggle" aria-label="Toggle geluid">
     <svg class="music-icon-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>
     <svg class="music-icon-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>

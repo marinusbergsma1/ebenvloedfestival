@@ -113,37 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sfxIntro1 = document.getElementById('sfxIntro1');
   const sfxIntro2 = document.getElementById('sfxIntro2');
   const musicToggle = document.getElementById('musicToggle');
-  let audioUnlocked = false;
+  const enterOverlay = document.getElementById('enterOverlay');
   let allMuted = false;
-
-  // Unlock audio context on any interaction, then auto-play everything
-  function unlockAudio() {
-    if (audioUnlocked) return;
-    audioUnlocked = true;
-
-    // Start background music with fade-in
-    if (bgMusic) {
-      bgMusic.volume = 0;
-      bgMusic.play().then(() => {
-        if (musicToggle) musicToggle.classList.add('playing');
-        let vol = 0;
-        const fadeIn = setInterval(() => {
-          vol += 0.01;
-          if (vol >= 0.3) { vol = 0.3; clearInterval(fadeIn); }
-          if (!allMuted) bgMusic.volume = vol;
-        }, 60);
-      }).catch(() => {});
-    }
-
-    document.removeEventListener('click', unlockAudio);
-    document.removeEventListener('touchstart', unlockAudio);
-    document.removeEventListener('scroll', unlockAudio);
-    document.removeEventListener('mousemove', unlockAudio);
-  }
-  document.addEventListener('click', unlockAudio);
-  document.addEventListener('touchstart', unlockAudio);
-  document.addEventListener('scroll', unlockAudio);
-  document.addEventListener('mousemove', unlockAudio);
 
   // Music toggle = mute/unmute ALL audio
   if (musicToggle) {
@@ -153,9 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bgMusic) bgMusic.volume = 0;
         if (sfxIntro1) sfxIntro1.volume = 0;
         if (sfxIntro2) sfxIntro2.volume = 0;
+        if (heroVideo) heroVideo.muted = true;
         musicToggle.classList.remove('playing');
       } else {
         if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.3;
+        if (heroVideo) heroVideo.muted = false;
         musicToggle.classList.add('playing');
       }
     });
@@ -168,9 +141,43 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.play().catch(() => {});
   }
 
-  if (heroVideo) {
-    // PHASE 1: Blue intro with date flash
+  // --- ENTER overlay click starts EVERYTHING ---
+  function startExperience() {
+    // Hide enter overlay
+    if (enterOverlay) {
+      enterOverlay.classList.add('leaving');
+      setTimeout(() => { enterOverlay.style.display = 'none'; }, 800);
+    }
+
+    // Unlock & start background music immediately with fade-in
+    if (bgMusic) {
+      bgMusic.volume = 0;
+      bgMusic.play().then(() => {
+        if (musicToggle) musicToggle.classList.add('playing');
+        let vol = 0;
+        const fadeIn = setInterval(() => {
+          vol += 0.015;
+          if (vol >= 0.3) { vol = 0.3; clearInterval(fadeIn); }
+          if (!allMuted) bgMusic.volume = vol;
+        }, 60);
+      }).catch(() => {});
+    }
+
+    // Start hero animation timeline
+    startHeroTimeline();
+  }
+
+  if (enterOverlay) {
+    enterOverlay.addEventListener('click', startExperience);
+    enterOverlay.addEventListener('touchstart', startExperience);
+  }
+
+  function startHeroTimeline() {
+    if (!heroVideo) return;
+
     const heroDateFlash = document.getElementById('heroDateFlash');
+
+    // PHASE 1: Blue intro with date flash
     setTimeout(() => {
       if (heroDateFlash) heroDateFlash.classList.add('visible');
     }, 800);
@@ -182,16 +189,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 2200);
 
-    // PHASE 2: Blue intro recedes → poster revealed
+    // PHASE 2: Blue intro recedes → VIDEO starts immediately (no poster)
     setTimeout(() => {
+      heroVideo.classList.add('playing');
+      heroVideo.play();
+      playSfx(sfxIntro1, 0.6);
       if (heroBlueIntro) heroBlueIntro.classList.add('receding');
     }, 2500);
 
-    // PHASE 3: IS BACK! slams in over poster
+    // PHASE 3: IS BACK! slams in while video plays + SFX
     setTimeout(() => {
       if (heroIsBack) heroIsBack.classList.add('visible');
-      // Play cinematic SFX
-      playSfx(sfxIntro1, 0.5);
+      playSfx(sfxIntro2, 0.5);
     }, 4200);
 
     setTimeout(() => {
@@ -201,37 +210,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 5000);
 
-    // PHASE 4: Video starts + second SFX + music fade-in
-    setTimeout(() => {
-      heroVideo.classList.add('playing');
-      heroVideo.play();
-      playSfx(sfxIntro2, 0.4);
-    }, 5200);
-
-    // PHASE 5: Track video time — start waves 2s BEFORE video ends
+    // PHASE 5: Track video time — start waves 1.5s BEFORE video ends
     let waveStarted = false;
     heroVideo.addEventListener('timeupdate', () => {
       if (waveStarted) return;
       const timeLeft = heroVideo.duration - heroVideo.currentTime;
-      if (timeLeft <= 0.5 && timeLeft > 0) {
+      if (timeLeft <= 1.5 && timeLeft > 0) {
         waveStarted = true;
         if (waveFlood) waveFlood.classList.add('rising');
       }
     });
 
-    // PHASE 6: When video fully ends → DJ flash, genres, then recede
+    // PHASE 6: When video ends → DJ flash, genres, then recede
     heroVideo.addEventListener('ended', () => {
       heroVideo.classList.remove('playing');
       heroVideo.classList.add('ended');
 
-      // DJ names flash (waves already covering by now)
+      // DJ names flash
       setTimeout(() => {
         if (heroDjFlash) heroDjFlash.classList.add('visible');
         const djNames = heroDjFlash ? heroDjFlash.querySelectorAll('span') : [];
         djNames.forEach((name, i) => {
           name.style.animationDelay = (i * 0.15) + 's';
         });
-      }, 500);
+      }, 300);
 
       // DJs fade out
       setTimeout(() => {
@@ -239,12 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
           heroDjFlash.classList.remove('visible');
           heroDjFlash.classList.add('fadeout');
         }
-      }, 2200);
+      }, 2000);
 
       // Genres appear
       setTimeout(() => {
         if (heroGenres) heroGenres.classList.add('visible');
-      }, 2400);
+      }, 2200);
 
       // Genres fade
       setTimeout(() => {
@@ -252,26 +254,29 @@ document.addEventListener('DOMContentLoaded', () => {
           heroGenres.classList.remove('visible');
           heroGenres.classList.add('fadeout');
         }
-      }, 3400);
+      }, 3200);
 
-      // Waves recede — NO logo, just poster
+      // Waves recede — poster revealed, NO logo
       setTimeout(() => {
         if (waveFlood) {
           waveFlood.classList.remove('rising');
           waveFlood.classList.add('receding');
         }
-      }, 3800);
+      }, 3600);
 
-      // GET YOUR TICKETS NOW! (big, white, centered)
+      // GET YOUR TICKETS NOW! big and centered (no logo)
       setTimeout(() => {
         if (heroTickets) heroTickets.classList.add('visible');
-      }, 4500);
+      }, 4300);
 
-      // Show countdown
+      // Show countdown big
       setTimeout(() => {
         const cd = document.getElementById('heroCountdown');
         if (cd) cd.classList.add('visible');
-      }, 5300);
+      }, 5100);
+
+      // Logo stays hidden — don't show it
+      // heroLogo stays opacity: 0
     });
   }
 
