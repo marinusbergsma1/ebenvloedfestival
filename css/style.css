@@ -342,15 +342,13 @@ a:hover { color: var(--color-ocean-light); }
   pointer-events: none;
 }
 
-/* Blue intro overlay (covers everything at load) */
+/* Blue intro overlay (hidden — not used in current flow) */
 .hero-blue-intro {
   position: absolute;
   inset: 0;
   z-index: 20;
   pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
 }
 
 .hero-blue-intro-fill {
@@ -492,10 +490,10 @@ a:hover { color: var(--color-ocean-light); }
   z-index: 1;
   background:
     linear-gradient(180deg,
-      rgba(10, 22, 40, 0.3) 0%,
-      rgba(10, 22, 40, 0.15) 40%,
-      rgba(10, 22, 40, 0.5) 80%,
-      rgba(10, 22, 40, 1) 100%
+      rgba(10, 22, 40, 0.15) 0%,
+      rgba(10, 22, 40, 0.05) 40%,
+      rgba(10, 22, 40, 0.3) 80%,
+      rgba(10, 22, 40, 0.8) 100%
     );
 }
 
