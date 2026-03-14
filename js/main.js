@@ -113,46 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const sfxIntro1 = document.getElementById('sfxIntro1');
   const sfxIntro2 = document.getElementById('sfxIntro2');
   const musicToggle = document.getElementById('musicToggle');
-  const enterOverlay = document.getElementById('enterOverlay');
   let allMuted = false;
+  let audioUnlocked = false;
+  let pendingSfx = []; // queue SFX that fire before user interacts
 
-  // Music toggle = mute/unmute ALL audio
-  if (musicToggle) {
-    musicToggle.addEventListener('click', () => {
-      allMuted = !allMuted;
-      if (allMuted) {
-        if (bgMusic) bgMusic.volume = 0;
-        if (sfxIntro1) sfxIntro1.volume = 0;
-        if (sfxIntro2) sfxIntro2.volume = 0;
-        if (heroVideo) heroVideo.muted = true;
-        musicToggle.classList.remove('playing');
-      } else {
-        if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.3;
-        if (heroVideo) heroVideo.muted = false;
-        musicToggle.classList.add('playing');
-      }
-    });
-  }
+  // Unlock audio on first user interaction
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
 
-  function playSfx(audio, vol) {
-    if (!audio || allMuted) return;
-    audio.volume = vol;
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
-  }
-
-  // --- ENTER overlay click starts EVERYTHING ---
-  function startExperience() {
-    // Hide enter overlay
-    if (enterOverlay) {
-      enterOverlay.classList.add('leaving');
-      setTimeout(() => { enterOverlay.style.display = 'none'; }, 800);
-    }
-
-    // Hide blue intro immediately — start with poster visible
-    if (heroBlueIntro) heroBlueIntro.style.display = 'none';
-
-    // Start background music RIGHT AWAY with fast fade-in
+    // Start music with fast fade-in
     if (bgMusic) {
       bgMusic.volume = 0;
       bgMusic.play().then(() => {
@@ -166,21 +136,58 @@ document.addEventListener('DOMContentLoaded', () => {
       }).catch(() => {});
     }
 
-    // Start hero animation timeline
-    startHeroTimeline();
+    // Play any queued SFX
+    pendingSfx.forEach(s => { s.audio.volume = s.vol; s.audio.play().catch(() => {}); });
+    pendingSfx = [];
+
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('scroll', unlockAudio);
+    document.removeEventListener('mousemove', unlockAudio);
+  }
+  document.addEventListener('click', unlockAudio);
+  document.addEventListener('touchstart', unlockAudio);
+  document.addEventListener('scroll', unlockAudio);
+  document.addEventListener('mousemove', unlockAudio);
+
+  // Music toggle = mute/unmute ALL audio
+  if (musicToggle) {
+    musicToggle.addEventListener('click', () => {
+      allMuted = !allMuted;
+      if (allMuted) {
+        if (bgMusic) bgMusic.volume = 0;
+        if (sfxIntro1) sfxIntro1.volume = 0;
+        if (sfxIntro2) sfxIntro2.volume = 0;
+        if (heroVideo) heroVideo.muted = true;
+        musicToggle.classList.remove('playing');
+      } else {
+        if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.35;
+        if (heroVideo) heroVideo.muted = false;
+        musicToggle.classList.add('playing');
+      }
+    });
   }
 
-  if (enterOverlay) {
-    enterOverlay.addEventListener('click', startExperience);
-    enterOverlay.addEventListener('touchstart', startExperience);
+  function playSfx(audio, vol) {
+    if (!audio || allMuted) return;
+    if (!audioUnlocked) {
+      pendingSfx.push({ audio, vol });
+      return;
+    }
+    audio.volume = vol;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
   }
 
-  function startHeroTimeline() {
-    if (!heroVideo) return;
+  // Hide blue intro — start with poster visible
+  if (heroBlueIntro) heroBlueIntro.style.display = 'none';
 
+  // --- Hero Animation Timeline (starts automatically) ---
+  if (heroVideo) {
     const heroDateFlash = document.getElementById('heroDateFlash');
 
-    // PHASE 1: Poster visible for 2s, music fading in
+    // 0s: Poster image visible, music fading in on first interaction
+
     // 1.5s: "13 JUNI" appears over poster
     setTimeout(() => {
       if (heroDateFlash) heroDateFlash.classList.add('visible');
@@ -191,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
       playSfx(sfxIntro1, 0.7);
     }, 2000);
 
-    // 3s: "13 JUNI" fades out
+    // 3.2s: "13 JUNI" fades out
     setTimeout(() => {
       if (heroDateFlash) {
         heroDateFlash.classList.remove('visible');
@@ -199,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 3200);
 
-    // 3.5s: Video starts playing (replaces poster)
+    // 3.5s: Video starts playing (replaces poster) + SFX
     setTimeout(() => {
       heroVideo.classList.add('playing');
       heroVideo.play();
@@ -287,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Logo stays hidden — don't show it
       // heroLogo stays opacity: 0
     });
-  }
+  } // end if(heroVideo)
 
   // --- Scroll Reveal (Intersection Observer) ---
   const revealElements = document.querySelectorAll('.reveal');
@@ -361,6 +368,64 @@ document.addEventListener('DOMContentLoaded', () => {
       button.setAttribute('aria-expanded', !isActive);
     });
   });
+
+  // --- Falling Flower Petals ---
+  const petalsContainer = document.getElementById('petalsContainer');
+  if (petalsContainer) {
+    const petalColors = [
+      { fill: '#ff6b8a', stroke: '#e8507a' },  // pink hibiscus
+      { fill: '#ff9a56', stroke: '#e87a36' },  // orange tropical
+      { fill: '#ffdd57', stroke: '#e8c437' },  // yellow frangipani
+      { fill: '#ff4757', stroke: '#cc2f3f' },  // red
+      { fill: '#ff85a2', stroke: '#e86585' },  // light pink
+      { fill: '#ffa94d', stroke: '#e88930' },  // warm orange
+    ];
+
+    const petalShapes = [
+      // Hibiscus-style petal
+      '<svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 2C14 2 8 6 6 12C4 18 8 24 14 26C20 24 24 18 22 12C20 6 14 2 14 2Z" fill="FILL" stroke="STROKE" stroke-width="0.5" opacity="0.85"/></svg>',
+      // Frangipani petal
+      '<svg width="24" height="30" viewBox="0 0 24 30"><path d="M12 0C12 0 4 8 2 16C0 24 6 30 12 30C18 30 24 24 22 16C20 8 12 0 12 0Z" fill="FILL" stroke="STROKE" stroke-width="0.5" opacity="0.85"/></svg>',
+      // Round petal
+      '<svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="10" ry="8" fill="FILL" stroke="STROKE" stroke-width="0.5" opacity="0.8" transform="rotate(15 11 11)"/></svg>',
+      // Small star flower
+      '<svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 0L12 7L20 10L12 13L10 20L8 13L0 10L8 7Z" fill="FILL" stroke="STROKE" stroke-width="0.3" opacity="0.75"/></svg>',
+    ];
+
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      const color = petalColors[Math.floor(Math.random() * petalColors.length)];
+      const shape = petalShapes[Math.floor(Math.random() * petalShapes.length)];
+      const x = Math.random() * 100;
+      const size = 0.6 + Math.random() * 0.8;
+      const duration = 6 + Math.random() * 8;
+      const delay = Math.random() * 2;
+      const swayAmount = 40 + Math.random() * 80;
+
+      petal.innerHTML = shape.replace(/FILL/g, color.fill).replace(/STROKE/g, color.stroke);
+      petal.style.cssText = `
+        left: ${x}%;
+        animation-duration: ${duration}s;
+        animation-delay: ${delay}s;
+        transform-origin: center;
+      `;
+
+      // Add horizontal sway with CSS custom property
+      petal.style.setProperty('--sway', swayAmount + 'px');
+      petal.querySelector('svg').style.transform = `scale(${size})`;
+
+      petalsContainer.appendChild(petal);
+      setTimeout(() => petal.remove(), (duration + delay) * 1000);
+    }
+
+    // Create initial burst
+    for (let i = 0; i < 8; i++) {
+      setTimeout(() => createPetal(), i * 300);
+    }
+    // Keep creating petals
+    setInterval(createPetal, 1500);
+  }
 
   // --- Smooth scroll for anchor links ---
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
