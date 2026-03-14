@@ -108,51 +108,65 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // --- Background Music ---
+  // --- Audio System ---
   const bgMusic = document.getElementById('bgMusic');
+  const sfxIntro1 = document.getElementById('sfxIntro1');
+  const sfxIntro2 = document.getElementById('sfxIntro2');
   const musicToggle = document.getElementById('musicToggle');
-  let musicStarted = false;
+  let audioUnlocked = false;
+  let allMuted = false;
 
-  function startMusic() {
-    if (bgMusic && !musicStarted) {
+  // Unlock audio context on any interaction, then auto-play everything
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+
+    // Start background music with fade-in
+    if (bgMusic) {
       bgMusic.volume = 0;
       bgMusic.play().then(() => {
-        musicStarted = true;
         if (musicToggle) musicToggle.classList.add('playing');
-        // Fade in over 2s
         let vol = 0;
         const fadeIn = setInterval(() => {
-          vol += 0.02;
-          if (vol >= 0.35) { vol = 0.35; clearInterval(fadeIn); }
-          bgMusic.volume = vol;
-        }, 50);
+          vol += 0.01;
+          if (vol >= 0.3) { vol = 0.3; clearInterval(fadeIn); }
+          if (!allMuted) bgMusic.volume = vol;
+        }, 60);
       }).catch(() => {});
     }
-  }
 
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('scroll', unlockAudio);
+    document.removeEventListener('mousemove', unlockAudio);
+  }
+  document.addEventListener('click', unlockAudio);
+  document.addEventListener('touchstart', unlockAudio);
+  document.addEventListener('scroll', unlockAudio);
+  document.addEventListener('mousemove', unlockAudio);
+
+  // Music toggle = mute/unmute ALL audio
   if (musicToggle) {
     musicToggle.addEventListener('click', () => {
-      if (!bgMusic) return;
-      if (bgMusic.paused) {
-        bgMusic.play();
-        musicToggle.classList.add('playing');
-      } else {
-        bgMusic.pause();
+      allMuted = !allMuted;
+      if (allMuted) {
+        if (bgMusic) bgMusic.volume = 0;
+        if (sfxIntro1) sfxIntro1.volume = 0;
+        if (sfxIntro2) sfxIntro2.volume = 0;
         musicToggle.classList.remove('playing');
+      } else {
+        if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.3;
+        musicToggle.classList.add('playing');
       }
     });
   }
 
-  // Start music on first user interaction
-  function onFirstInteraction() {
-    startMusic();
-    document.removeEventListener('click', onFirstInteraction);
-    document.removeEventListener('touchstart', onFirstInteraction);
-    document.removeEventListener('scroll', onFirstInteraction);
+  function playSfx(audio, vol) {
+    if (!audio || allMuted) return;
+    audio.volume = vol;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
   }
-  document.addEventListener('click', onFirstInteraction);
-  document.addEventListener('touchstart', onFirstInteraction);
-  document.addEventListener('scroll', onFirstInteraction);
 
   if (heroVideo) {
     // PHASE 1: Blue intro with date flash
@@ -176,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // PHASE 3: IS BACK! slams in over poster
     setTimeout(() => {
       if (heroIsBack) heroIsBack.classList.add('visible');
+      // Play cinematic SFX
+      playSfx(sfxIntro1, 0.5);
     }, 4200);
 
     setTimeout(() => {
@@ -185,31 +201,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 5000);
 
-    // PHASE 4: Video starts playing
+    // PHASE 4: Video starts + second SFX + music fade-in
     setTimeout(() => {
       heroVideo.classList.add('playing');
       heroVideo.play();
+      playSfx(sfxIntro2, 0.4);
     }, 5200);
 
-    // PHASE 5: When video ENDS → waves rise, DJ flash, genres, then recede
-    heroVideo.addEventListener('ended', () => {
-      const t = 0;
-
-      // Waves rise immediately when video ends
-      setTimeout(() => {
+    // PHASE 5: Track video time — start waves 2s BEFORE video ends
+    let waveStarted = false;
+    heroVideo.addEventListener('timeupdate', () => {
+      if (waveStarted) return;
+      const timeLeft = heroVideo.duration - heroVideo.currentTime;
+      if (timeLeft <= 2 && timeLeft > 0) {
+        waveStarted = true;
         if (waveFlood) waveFlood.classList.add('rising');
-      }, t);
+      }
+    });
 
-      // After waves covered screen (1.8s rise), show DJ names
+    // PHASE 6: When video fully ends → DJ flash, genres, then recede
+    heroVideo.addEventListener('ended', () => {
+      heroVideo.classList.remove('playing');
+      heroVideo.classList.add('ended');
+
+      // DJ names flash (waves already covering by now)
       setTimeout(() => {
-        heroVideo.classList.remove('playing');
-        heroVideo.classList.add('ended');
         if (heroDjFlash) heroDjFlash.classList.add('visible');
         const djNames = heroDjFlash ? heroDjFlash.querySelectorAll('span') : [];
         djNames.forEach((name, i) => {
           name.style.animationDelay = (i * 0.15) + 's';
         });
-      }, t + 1500);
+      }, 500);
 
       // DJs fade out
       setTimeout(() => {
@@ -217,12 +239,12 @@ document.addEventListener('DOMContentLoaded', () => {
           heroDjFlash.classList.remove('visible');
           heroDjFlash.classList.add('fadeout');
         }
-      }, t + 3200);
+      }, 2200);
 
       // Genres appear
       setTimeout(() => {
         if (heroGenres) heroGenres.classList.add('visible');
-      }, t + 3400);
+      }, 2400);
 
       // Genres fade
       setTimeout(() => {
@@ -230,31 +252,26 @@ document.addEventListener('DOMContentLoaded', () => {
           heroGenres.classList.remove('visible');
           heroGenres.classList.add('fadeout');
         }
-      }, t + 4400);
+      }, 3400);
 
-      // Waves recede
+      // Waves recede — NO logo, just poster
       setTimeout(() => {
         if (waveFlood) {
           waveFlood.classList.remove('rising');
           waveFlood.classList.add('receding');
         }
-      }, t + 4800);
+      }, 3800);
 
-      // Logo slams in over poster
-      setTimeout(() => {
-        if (heroLogo) heroLogo.classList.add('logo-visible');
-      }, t + 5300);
-
-      // GET YOUR TICKETS NOW!
+      // GET YOUR TICKETS NOW! (big, white, centered)
       setTimeout(() => {
         if (heroTickets) heroTickets.classList.add('visible');
-      }, t + 6000);
+      }, 4500);
 
       // Show countdown
       setTimeout(() => {
         const cd = document.getElementById('heroCountdown');
         if (cd) cd.classList.add('visible');
-      }, t + 6800);
+      }, 5300);
     });
   }
 

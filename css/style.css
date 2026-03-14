@@ -523,14 +523,14 @@ a:hover { color: var(--color-ocean-light); }
 /* GET YOUR TICKETS NOW */
 .hero-tickets {
   font-family: 'TT Norms', 'Inter', sans-serif;
-  font-size: clamp(18px, 3.5vw, 42px);
+  font-size: clamp(28px, 6vw, 80px);
   font-weight: 900;
-  color: var(--color-accent);
+  color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   line-height: 1;
   text-shadow:
-    0 0 40px rgba(59, 196, 196, 0.6),
+    0 0 40px rgba(255, 255, 255, 0.4),
     0 0 100px rgba(59, 196, 196, 0.3),
     0 4px 30px rgba(0, 0, 0, 0.8);
   opacity: 0;
@@ -578,7 +578,7 @@ a:hover { color: var(--color-ocean-light); }
 
 .countdown-num {
   font-family: 'TT Norms', 'Inter', sans-serif;
-  font-size: clamp(28px, 5vw, 56px);
+  font-size: clamp(36px, 7vw, 80px);
   font-weight: 900;
   color: #fff;
   line-height: 1;
@@ -1149,7 +1149,13 @@ a:hover { color: var(--color-ocean-light); }
   background: transparent;
 }
 .section--lineup { background: var(--color-bg-alt); }
-.section--gallery { background: var(--color-bg); }
+.section--gallery {
+  background: linear-gradient(180deg, var(--color-sand) 0%, var(--color-bg) 100%);
+}
+.section--gallery .section-label,
+.section--gallery .section-title {
+  color: var(--color-bg);
+}
 .section--info { background: var(--color-bg-alt); }
 .section--tickets { background: var(--color-bg); padding-bottom: 100px; }
 
@@ -1887,3 +1893,4 @@ a:hover { color: var(--color-ocean-light); }
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(59, 196, 196, 0.5); }
+196, 0.5); }
